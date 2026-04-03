@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "description": "Standalone CLI wrapper for Nutrient's PDF-to-Markdown extractor",
   "bin": {
-    "pdf-to-markdown": "./bin/pdf-to-markdown"
+    "pdf-to-markdown": "bin/pdf-to-markdown"
   },
   "files": [
     "bin",
-    "docs",
+    "docs/benchmarks.md",
+    "docs/distribution-model.md",
     "README.md",
     "LICENSE.md",
     "install.sh"

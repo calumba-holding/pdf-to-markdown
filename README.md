@@ -6,7 +6,7 @@
 [![Windows](https://img.shields.io/badge/Windows-x64_(coming_soon)-yellow)](https://github.com/PSPDFKit/pdf-to-markdown)
 
 <p align="center">
-  <img src="docs/assets/demo.gif" alt="pdf-to-markdown demo" width="720">
+  <img src="https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/demo.gif" alt="pdf-to-markdown demo" width="720">
 </p>
 
 **Stop wasting your context window on PDF extraction.**
@@ -49,7 +49,21 @@ The skill invokes the CLI transparently and passes the resulting Markdown into y
 
 ### Standalone CLI
 
-For use outside an agent, install the CLI directly:
+For use outside an agent, install the published npm package:
+
+```bash
+npm install -g @pspdfkit/pdf-to-markdown
+```
+
+Or run it without a global install:
+
+```bash
+npx @pspdfkit/pdf-to-markdown --help
+```
+
+The package supports Node `18+` on macOS Apple Silicon, Linux x86_64, and Linux arm64.
+
+If you prefer a shell installer, keep the curl fallback:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/install.sh | sh
@@ -63,6 +77,14 @@ You can also install from a clone:
 git clone https://github.com/PSPDFKit/pdf-to-markdown.git
 cd pdf-to-markdown
 ./install.sh            # or: npm install -g .
+```
+
+### Quick Check
+
+After install, verify the CLI is available:
+
+```bash
+pdf-to-markdown --help
 ```
 
 ## Usage
@@ -96,17 +118,17 @@ Benchmark results from 200 PDF documents with hand-annotated Markdown ground tru
 
 ### Visual Snapshot
 
-![Extraction accuracy](docs/assets/extraction-accuracy.png)
+![Extraction accuracy](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/extraction-accuracy.png)
 
-![Reading order](docs/assets/reading-order.png)
+![Reading order](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/reading-order.png)
 
-![Table structure](docs/assets/table-structure.png)
+![Table structure](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/table-structure.png)
 
-![Heading level](docs/assets/heading-level.png)
+![Heading level](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/heading-level.png)
 
-![Extraction speed](docs/assets/extraction-speed.png)
+![Extraction speed](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/extraction-speed.png)
 
-![Faster with Nutrient](docs/assets/faster-with-nutrient.png)
+![Faster with Nutrient](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/faster-with-nutrient.png)
 
 ### Accuracy
 
