@@ -1,6 +1,7 @@
 # Nutrient PDF to Markdown
 
 [![License: Proprietary](https://img.shields.io/badge/license-Nutrient_Free_Use-blue)](LICENSE.md)
+[![npm version](https://img.shields.io/npm/v/%40pspdfkit%2Fpdf-to-markdown)](https://www.npmjs.com/package/@pspdfkit/pdf-to-markdown)
 [![macOS](https://img.shields.io/badge/macOS-arm64-brightgreen)](https://github.com/PSPDFKit/pdf-to-markdown)
 [![Linux](https://img.shields.io/badge/Linux-x64_|_arm64-brightgreen)](https://github.com/PSPDFKit/pdf-to-markdown)
 [![Windows](https://img.shields.io/badge/Windows-x64_(coming_soon)-yellow)](https://github.com/PSPDFKit/pdf-to-markdown)
