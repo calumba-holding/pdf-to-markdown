@@ -1,6 +1,6 @@
 {
   "name": "@pspdfkit/pdf-to-markdown",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Standalone CLI wrappers for Nutrient's PDF-to-Markdown and PDF-to-text extractor",
   "bin": {
     "pdf-to-markdown": "bin/pdf-to-markdown",
