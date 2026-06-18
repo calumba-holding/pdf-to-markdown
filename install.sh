@@ -3,12 +3,15 @@ set -eu
 
 INSTALL_DIR="${INSTALL_DIR:-${HOME}/.local/bin}"
 RAW_BASE_URL="${RAW_BASE_URL:-https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main}"
-TARGET="$INSTALL_DIR/pdf-to-markdown"
-TMP_FILE="$(mktemp "${TMPDIR:-/tmp}/pdf-to-markdown-install.XXXXXX")"
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+COMMANDS="pdf-to-markdown pdf-to-text"
+
+CURRENT_TMP=""
 
 cleanup() {
-  rm -f "$TMP_FILE"
+  if [ -n "$CURRENT_TMP" ]; then
+    rm -f "$CURRENT_TMP"
+  fi
 }
 
 trap cleanup EXIT INT TERM HUP
@@ -31,18 +34,29 @@ download() {
   exit 1
 }
 
+install_command() {
+  name="$1"
+  target="$INSTALL_DIR/$name"
+  CURRENT_TMP="$(mktemp "${TMPDIR:-/tmp}/${name}-install.XXXXXX")"
+
+  if [ -f "$SCRIPT_DIR/bin/$name" ]; then
+    cp "$SCRIPT_DIR/bin/$name" "$CURRENT_TMP"
+  else
+    download "$RAW_BASE_URL/bin/$name" "$CURRENT_TMP"
+  fi
+
+  chmod 0755 "$CURRENT_TMP"
+  mv "$CURRENT_TMP" "$target"
+  CURRENT_TMP=""
+
+  printf 'Installed %s to %s\n' "$name" "$target"
+}
+
 mkdir -p "$INSTALL_DIR"
 
-if [ -f "$SCRIPT_DIR/bin/pdf-to-markdown" ]; then
-  cp "$SCRIPT_DIR/bin/pdf-to-markdown" "$TMP_FILE"
-else
-  download "$RAW_BASE_URL/bin/pdf-to-markdown" "$TMP_FILE"
-fi
-
-chmod 0755 "$TMP_FILE"
-mv "$TMP_FILE" "$TARGET"
-
-printf 'Installed pdf-to-markdown to %s\n' "$TARGET"
+for command_name in $COMMANDS; do
+  install_command "$command_name"
+done
 
 case ":$PATH:" in
   *":$INSTALL_DIR:"*) ;;
