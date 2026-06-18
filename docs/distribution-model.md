@@ -4,7 +4,7 @@ This repository is designed to make the CLI easy to evaluate and install without
 
 ## What Stays In This Repo
 
-- public wrapper logic in [bin/pdf-to-markdown](../bin/pdf-to-markdown)
+- public wrapper logic in [bin/pdf-to-markdown](../bin/pdf-to-markdown) and [bin/pdf-to-text](../bin/pdf-to-text) — two thin wrappers over one shared binary, which selects its verb (`pdf-to-markdown` / `pdf-to-text`) from the invocation name
 - installer in [install.sh](../install.sh)
 - package metadata in [package.json](../package.json)
 - public README and benchmark snapshots
