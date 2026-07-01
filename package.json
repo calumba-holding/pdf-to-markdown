@@ -1,10 +1,11 @@
 {
   "name": "@pspdfkit/pdf-to-markdown",
-  "version": "0.3.0",
-  "description": "Standalone CLI wrappers for Nutrient's PDF-to-Markdown and PDF-to-text extractor",
+  "version": "0.4.0",
+  "description": "Standalone CLI for Nutrient's document extractors — PDF to Markdown, PDF to text, and ranked query over extracted files",
   "bin": {
     "pdf-to-markdown": "bin/pdf-to-markdown",
-    "pdf-to-text": "bin/pdf-to-text"
+    "pdf-to-text": "bin/pdf-to-text",
+    "query": "bin/query"
   },
   "files": [
     "bin",
@@ -15,7 +16,7 @@
     "install.sh"
   ],
   "scripts": {
-    "check": "sh -n ./install.sh && sh -n ./bin/pdf-to-markdown && sh -n ./bin/pdf-to-text",
+    "check": "sh -n ./install.sh && sh -n ./bin/pdf-to-markdown && sh -n ./bin/pdf-to-text && sh -n ./bin/query",
     "pack:dry-run": "npm pack --dry-run"
   },
   "os": [
@@ -32,10 +33,12 @@
   "keywords": [
     "pdf",
     "markdown",
+    "pdf-to-text",
     "cli",
     "nutrient",
     "pspdfkit",
-    "document-processing"
+    "document-processing",
+    "rag"
   ],
   "repository": {
     "type": "git",

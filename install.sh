@@ -4,7 +4,7 @@ set -eu
 INSTALL_DIR="${INSTALL_DIR:-${HOME}/.local/bin}"
 RAW_BASE_URL="${RAW_BASE_URL:-https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main}"
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-COMMANDS="pdf-to-markdown pdf-to-text"
+COMMANDS="pdf-to-markdown pdf-to-text query"
 
 CURRENT_TMP=""
 
