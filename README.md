@@ -16,10 +16,24 @@ Fast, accurate Markdown from PDFs — locally, with no cleanup required. Built f
 
 - **How fast is it?** — 0.011s per page. 48x faster than docling, 29x faster than pymupdf4llm. ([benchmarks](#benchmarks))
 - **How accurate is it?** — 0.93 reading order (best in class), 0.89 overall extraction accuracy, 0.82 heading detection. ([benchmarks](#benchmarks))
-- **Two commands** — `pdf-to-markdown` for structured Markdown, `pdf-to-text` for layout-preserving plain text. Same local binary; pick by what the downstream consumer needs. ([usage](#usage))
+- **Three tools, one binary** — `pdf-to-markdown` for structured Markdown, `pdf-to-text` for layout-preserving plain text, and `query` for ranked search over an extracted file. Pick by what the downstream consumer needs. ([the Nutrient document CLI](#the-nutrient-document-cli))
 - **NEW: Image export** — `--enable-image-export` extracts images alongside Markdown for vision-capable LLMs. ([usage](#image-export))
 - **Where do my PDFs go?** — Nowhere. The CLI runs locally. Your documents are not uploaded to Nutrient. ([trust & licensing](#trust-and-licensing))
 - **What does it cost?** — Free for up to 1,000 documents per calendar month. No license key, no signup, no API token. ([license](LICENSE.md))
+
+## The Nutrient document CLI
+
+`pdf-to-markdown` is one verb of a single signed binary that turns **digital-born PDFs** into agent-ready output — locally, deterministically, on the same generous free tier. Convert once, then work against the result:
+
+| Command | What it does | Reach for it when |
+| --- | --- | --- |
+| **`pdf-to-markdown`** | PDF → clean Markdown (headings, lists, tables, reading order) | The consumer benefits from structure — most RAG and LLM-context pipelines |
+| **`pdf-to-text`** | PDF → layout-preserving plain text (columns and tabular alignment survive) | The consumer is plain-text only — a non-Markdown model, a grep/awk pipeline, a column-sensitive table reader |
+| **`query`** | Ranked **BM-25 search over an already-extracted file**, returning only the top line windows | You have a large conversion and want one fact or clause without reading the whole thing back into context — *parse once, query many* |
+
+All three install together from this package (and from the [Nutrient Skills](https://github.com/pspdfkit-labs/nutrient-skills) marketplace), and share one binary in `~/.local/share/nutrient/cli/`.
+
+> **Scanned or photographed documents?** This CLI is built for **digital-born** PDFs (a real text layer). For scanned, handwritten, or otherwise image-only documents — and for schema-level structured extraction with per-value coordinates and confidence — use the [Nutrient Data Extraction API](https://www.nutrient.io/api/data-extraction-api/).
 
 ## Install
 
@@ -43,6 +57,8 @@ With Pi:
 ```bash
 pi install git:github.com/PSPDFKit-labs/nutrient-skills
 ```
+
+The marketplace also ships the `pdf-to-text` and `query` skills — install them the same way (`--skill pdf-to-text`, `--skill query`) to give your agent the full convert → search workflow.
 
 Once installed, just reference a PDF in your prompt — no extra commands needed:
 
@@ -84,11 +100,12 @@ cd pdf-to-markdown
 
 ### Quick Check
 
-After install, verify both commands are available:
+After install, verify the commands are available:
 
 ```bash
 pdf-to-markdown --help
 pdf-to-text --help
+query --help
 ```
 
 ## Usage
@@ -137,6 +154,16 @@ Both commands are backed by the same local binary; pick by what the downstream c
 - **Use `pdf-to-markdown`** when the consumer benefits from semantic structure — headings, lists, tables, and reading order. Most RAG and LLM-context pipelines fall here.
 - **Use `pdf-to-text`** when the consumer is plain-text only — a non-Markdown model, a `grep`/`awk` pipeline, or a column-aligned table reader that cares about spatial layout rather than Markdown markup.
 
+### Search a converted document (`query`)
+
+A converted document can run to tens of thousands of lines and will blow out your context window if you read it back. `query` runs ranked BM-25 search over the extracted file and returns only the handful of line windows that matter — *parse once, query many*:
+
+```bash
+query text output.md "what is the total contract value?"
+```
+
+Each result is a `Lines A–B` window with global line numbers, so you can re-read the exact range for full context. `query` is a two-level command — `query text INPUT "QUERY"` — leaving room for more query types over time.
+
 ### Updates
 
 The wrapper keeps the bundled binary current on its own: it checks the Nutrient CDN for a newer build at most once every six hours and updates in place. No manual update step is required. (The binary also ships a `self-update` capability, but you don't need to invoke it through these commands.)
@@ -149,6 +176,8 @@ The wrapper keeps the bundled binary current on its own: it checks the Nutrient 
 - Windows x64 (coming soon)
 
 ## Benchmarks
+
+Nutrient is built for **digital-born** PDF extraction, so we benchmark it against the open-source parsers you'd otherwise reach for.
 
 Benchmark results from 200 PDF documents with hand-annotated Markdown ground truth, evaluated using NID (reading order), TEDS (table structure), and MHS (heading hierarchy) metrics. All competitor libraries pinned to their latest versions as of `2026-04-23`.
 
@@ -218,6 +247,10 @@ See [LICENSE.md](LICENSE.md) for the full terms and [docs/distribution-model.md]
 ### What makes this different from other PDF extractors?
 
 Speed and accuracy should not be a tradeoff. Most extractors are either fast but lose structure (markitdown, pymupdf4llm) or accurate but slow (docling). Nutrient extracts at 0.011s per page with the best reading order score (0.93), strong heading and table preservation — less cleanup, fewer wasted tokens, and more reliable downstream results.
+
+### What about scanned or handwritten documents?
+
+This CLI is built for **digital-born** PDFs that already contain a text layer. It does not OCR. For scanned, photographed, or handwritten documents — and for schema-level structured extraction with per-value coordinates and confidence scores — use the [Nutrient Data Extraction API](https://www.nutrient.io/api/data-extraction-api/), which is designed for exactly that.
 
 ### Do my documents leave my machine?
 

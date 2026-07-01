@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0 — 2026-06-30
+
+- Add `query` command: ranked BM-25 search over an already-extracted file, returning only the top line windows with global line numbers ("parse once, query many") — backed by the same local binary via an `argv[0]` symlink (`query` is a two-level command, `query text INPUT "QUERY"`)
+- `install.sh` and the npm package now install `pdf-to-markdown`, `pdf-to-text`, and `query`
+- README reframed as the Nutrient document CLI: a three-command family for digital-born PDFs, with explicit positioning vs. open-source parsers (not cloud vision models) and a pointer to the Data Extraction API for scanned/handwritten documents and schema-level structured extraction
+- No changes to the extraction engine or benchmarks in this release
+
 ## 0.3.0 — 2026-06-17
 
 - Add `pdf-to-text` command: layout-preserving plain-text extraction (single file, batch directory, and stdout modes), backed by the same local binary as `pdf-to-markdown`
