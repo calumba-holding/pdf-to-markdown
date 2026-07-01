@@ -16,6 +16,7 @@ Fast, accurate Markdown from PDFs — locally, with no cleanup required. Built f
 
 - **How fast is it?** — 0.011s per page. 48x faster than docling, 29x faster than pymupdf4llm. ([benchmarks](#benchmarks))
 - **How accurate is it?** — 0.93 reading order (best in class), 0.89 overall extraction accuracy, 0.82 heading detection. ([benchmarks](#benchmarks))
+- **Two commands** — `pdf-to-markdown` for structured Markdown, `pdf-to-text` for layout-preserving plain text. Same local binary; pick by what the downstream consumer needs. ([usage](#usage))
 - **NEW: Image export** — `--enable-image-export` extracts images alongside Markdown for vision-capable LLMs. ([usage](#image-export))
 - **Where do my PDFs go?** — Nowhere. The CLI runs locally. Your documents are not uploaded to Nutrient. ([trust & licensing](#trust-and-licensing))
 - **What does it cost?** — Free for up to 1,000 documents per calendar month. No license key, no signup, no API token. ([license](LICENSE.md))
@@ -83,10 +84,11 @@ cd pdf-to-markdown
 
 ### Quick Check
 
-After install, verify the CLI is available:
+After install, verify both commands are available:
 
 ```bash
 pdf-to-markdown --help
+pdf-to-text --help
 ```
 
 ## Usage
@@ -114,6 +116,30 @@ pdf-to-markdown --enable-image-export input.pdf output.md
 ```
 
 Extracts images from the PDF and saves them to `output_resources/`, referenced as standard Markdown image links in the output. Useful when feeding results to vision-capable LLMs or when image context improves downstream accuracy. Off by default because it increases processing time for image-heavy documents.
+
+### Plain text (`pdf-to-text`)
+
+```bash
+pdf-to-text input.pdf output.txt
+```
+
+Produces layout-preserving plain text: each word is placed on a character grid that mirrors its position on the page, so columns, indentation, and tabular alignment survive the conversion. As with `pdf-to-markdown`, omit the output path to write to stdout, and pass two directories to batch-convert in parallel:
+
+```bash
+pdf-to-text input.pdf            # write to stdout
+pdf-to-text ./input-pdfs ./output-text
+```
+
+### Choosing `pdf-to-markdown` vs `pdf-to-text`
+
+Both commands are backed by the same local binary; pick by what the downstream consumer needs:
+
+- **Use `pdf-to-markdown`** when the consumer benefits from semantic structure — headings, lists, tables, and reading order. Most RAG and LLM-context pipelines fall here.
+- **Use `pdf-to-text`** when the consumer is plain-text only — a non-Markdown model, a `grep`/`awk` pipeline, or a column-aligned table reader that cares about spatial layout rather than Markdown markup.
+
+### Updates
+
+The wrapper keeps the bundled binary current on its own: it checks the Nutrient CDN for a newer build at most once every six hours and updates in place. No manual update step is required. (The binary also ships a `self-update` capability, but you don't need to invoke it through these commands.)
 
 ## Platform Support
 

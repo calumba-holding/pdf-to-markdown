@@ -218,11 +218,10 @@ fi
 
 # nutrient 1.1.0+ is multi-call: it reads its verb from argv[0]'s basename
 # (pdf-to-markdown / pdf-to-text / self-update). Pin the verb explicitly by
-# exec'ing a `pdf-to-markdown` symlink next to the platform binary, instead of
-# relying on the binary's default-to-markdown behavior when invoked under its
-# platform name. Pre-1.1.0 binaries without verb dispatch fall back to
-# positional argv, preserving the old behavior.
-VERB_LINK="${INSTALL_DIR}/pdf-to-markdown"
+# exec'ing a `pdf-to-text` symlink next to the platform binary, so the same
+# shared binary that backs pdf-to-markdown runs the pdf-to-text verb here.
+# Pre-1.1.0 binaries without verb dispatch fall back to positional argv.
+VERB_LINK="${INSTALL_DIR}/pdf-to-text"
 if [ "$(readlink "$VERB_LINK" 2>/dev/null)" != "$BINARY_NAME" ]; then
   rm -f "$VERB_LINK"
   ln -s "$BINARY_NAME" "$VERB_LINK"

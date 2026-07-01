@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 — 2026-06-17
+
+- Add `pdf-to-text` command: layout-preserving plain-text extraction (single file, batch directory, and stdout modes), backed by the same local binary as `pdf-to-markdown`
+- Pin verb dispatch explicitly via an `argv[0]` symlink so each command targets its own verb on the multi-call nutrient 1.1.0 binary, rather than relying on the binary's default-to-markdown behavior
+- `install.sh` and the npm package now install both `pdf-to-markdown` and `pdf-to-text`
+- Document when to use `pdf-to-text` vs `pdf-to-markdown`, plus the wrapper's automatic update behavior
+- Benchmarks unchanged this release
+
 ## 0.2.2 — 2026-04-23
 
 - Re-run benchmarks with all competitor libraries updated to latest versions
