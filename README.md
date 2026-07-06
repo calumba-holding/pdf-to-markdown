@@ -34,7 +34,7 @@ Fast, accurate Markdown from PDFs — locally, with no cleanup required. Built f
 
 All three install together from this package (and from the [Nutrient Skills](https://github.com/pspdfkit-labs/nutrient-skills) marketplace), and share one binary in `~/.local/share/nutrient/cli/`.
 
-> **Scanned or photographed documents?** This CLI is built for **digital-born** PDFs (a real text layer). For scanned, handwritten, or otherwise image-only documents — and for schema-level structured extraction with per-value coordinates and confidence — use the [Nutrient Data Extraction API](https://www.nutrient.io/api/data-extraction-api/).
+> **Scanned or photographed documents?** The default engine is built for **digital-born** PDFs (a real text layer). For scanned, handwritten, or otherwise image-only documents you have two options: the licensed [`--vision` tier](#the---vision-tier) runs a machine-vision ICR pipeline locally on the same binary, and the [Nutrient Data Extraction API](https://www.nutrient.io/api/data-extraction-api/) adds schema-level structured extraction with per-value coordinates and confidence in the cloud.
 
 ## Install
 
@@ -236,11 +236,11 @@ Nutrient and liteparse run batch-parallel; the other engines process sequentiall
 - `4x` faster than `pypdf`
 - `4x` faster than `opendataloader`
 
-### † The `--vision` tier
+### The `--vision` tier
 
-Nutrient 1.3.0 adds a machine-vision ICR pipeline behind the `--vision` flag: layout analysis, table reconstruction, formulas, and handwriting, running locally with GPU-hybrid inference (`--provider auto`; falls back to CPU). In this benchmark it tops **every** accuracy metric — including table structure, where it beats docling outright — at 1.05 s/page on CPU-class hardware.
+† Nutrient 1.3.0 adds a machine-vision ICR pipeline behind the `--vision` flag: layout analysis, table reconstruction, formulas, and handwriting, running locally with GPU-hybrid inference (`--provider auto`; falls back to CPU). In this benchmark it tops **every** accuracy metric — including table structure, where it beats docling outright — at 1.05 s/page on CPU-class hardware.
 
-Vision is a **licensed** capability: it requires a license key (`--license-key`) and is not part of the free tier. The default engine above remains free for up to 1,000 documents per calendar month. Contact `sales@nutrient.io` for a vision license.
+The first `--vision` run downloads the vision models (several hundred MB, cached locally afterward). Vision is a **licensed** capability: it requires a license key (`--license-key`) and is not part of the free tier. The default engine above remains free for up to 1,000 documents per calendar month. Contact `sales@nutrient.io` for a vision license.
 
 For the full comparison table, see [docs/benchmarks.md](docs/benchmarks.md).
 
@@ -249,6 +249,7 @@ For the full comparison table, see [docs/benchmarks.md](docs/benchmarks.md).
 - Free for up to `1,000` documents per calendar month
 - PDFs stay local — your documents are not uploaded to Nutrient by this extractor
 - A commercial license is required for processing more than `1,000` documents per month
+- The `--vision` ICR tier requires a separate license key (`--license-key`); without one, `--vision` refuses to run
 - The extraction engine is delivered as a signed platform binary; the repo contains only the wrapper and documentation
 - The license is non-transferable — you may not redistribute the binary standalone or sublicense it to third parties; embedding it in your own application is permitted under the free tier terms
 
@@ -262,7 +263,7 @@ Speed and accuracy should not be a tradeoff. Most extractors are either fast but
 
 ### What about scanned or handwritten documents?
 
-This CLI is built for **digital-born** PDFs that already contain a text layer. It does not OCR. For scanned, photographed, or handwritten documents — and for schema-level structured extraction with per-value coordinates and confidence scores — use the [Nutrient Data Extraction API](https://www.nutrient.io/api/data-extraction-api/), which is designed for exactly that.
+The **default engine** is built for digital-born PDFs that already contain a text layer and does not OCR. The licensed **`--vision` tier** (nutrient 1.3.0+) handles scanned, photographed, and handwritten documents locally with a machine-vision ICR pipeline — see [the `--vision` tier](#the---vision-tier). For schema-level structured extraction with per-value coordinates and confidence scores, use the [Nutrient Data Extraction API](https://www.nutrient.io/api/data-extraction-api/).
 
 ### Do my documents leave my machine?
 
@@ -270,7 +271,7 @@ No. The CLI processes PDFs locally. Nothing is uploaded to Nutrient. Note that i
 
 ### Do I need a license key or API token?
 
-No. There is no signup, no license key, and no API token. Install the CLI and start converting. The free tier (up to 1,000 documents per calendar month) is enforced via the [license terms](LICENSE.md), not a technical gate. If you need to process more than 1,000 documents per month, contact `sales@nutrient.io` for a commercial license.
+Not for the default engine. There is no signup, no license key, and no API token — install the CLI and start converting. The free tier (up to 1,000 documents per calendar month) is enforced via the [license terms](LICENSE.md), not a technical gate. The one exception is the **`--vision` tier**, which requires a license key. For vision licensing or processing more than 1,000 documents per month, contact `sales@nutrient.io`.
 
 ### Why is the extraction engine closed-source?
 
