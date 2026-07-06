@@ -14,8 +14,9 @@
 
 Fast, accurate Markdown from PDFs — locally, with no cleanup required. Built for Claude, Codex, RAG pipelines, and document-heavy automation where noisy extraction burns tokens and makes downstream results less reliable.
 
-- **How fast is it?** — 0.011s per page. 48x faster than docling, 29x faster than pymupdf4llm. ([benchmarks](#benchmarks))
+- **How fast is it?** — 0.004s per page. 134x faster than docling, 53x faster than pymupdf4llm. ([benchmarks](#benchmarks))
 - **How accurate is it?** — 0.93 reading order (best in class), 0.89 overall extraction accuracy, 0.82 heading detection. ([benchmarks](#benchmarks))
+- **NEW: `--vision` tier** — a licensed machine-vision ICR pipeline that tops every accuracy metric, including tables (0.94 TEDS), and handles scanned and handwritten documents. ([benchmarks](#benchmarks))
 - **Three tools, one binary** — `pdf-to-markdown` for structured Markdown, `pdf-to-text` for layout-preserving plain text, and `query` for ranked search over an extracted file. Pick by what the downstream consumer needs. ([the Nutrient document CLI](#the-nutrient-document-cli))
 - **NEW: Image export** — `--enable-image-export` extracts images alongside Markdown for vision-capable LLMs. ([usage](#image-export))
 - **Where do my PDFs go?** — Nowhere. The CLI runs locally. Your documents are not uploaded to Nutrient. ([trust & licensing](#trust-and-licensing))
@@ -181,9 +182,11 @@ The wrapper keeps the bundled binary current on its own: it checks the Nutrient 
 
 Nutrient is built for **digital-born** PDF extraction, so we benchmark it against the open-source parsers you'd otherwise reach for.
 
-Benchmark results from 200 PDF documents with hand-annotated Markdown ground truth, evaluated using NID (reading order), TEDS (table structure), and MHS (heading hierarchy) metrics. All competitor libraries pinned to their latest versions as of `2026-04-23`.
+Benchmark results from 200 PDF documents with hand-annotated Markdown ground truth, evaluated using NID (reading order), TEDS (table structure), and MHS (heading hierarchy) metrics. All competitor libraries pinned to their latest versions as of `2026-07-06`, run on an Apple M3 Ultra (no discrete GPU).
 
 ### Visual Snapshot
+
+> The charts below show the `2026-04-23` run; the tables reflect the `2026-07-06` re-run (chart refresh in progress).
 
 ![Extraction accuracy](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/extraction-accuracy.png?v=20260423)
 
@@ -201,36 +204,45 @@ Benchmark results from 200 PDF documents with hand-annotated Markdown ground tru
 
 | Solution | Version | Overall | Reading Order (NID) | Table Structure (TEDS) | Heading Level (MHS) |
 | --- | --- | ---: | ---: | ---: | ---: |
-| **Nutrient** | 1.0.1 | **0.89** | **0.93** | 0.71 | 0.82 |
-| docling | 2.91.0 | 0.88 | 0.90 | **0.89** | **0.82** |
-| opendataloader-hybrid | 2.3.0 | 0.87 | 0.91 | 0.68 | 0.81 |
-| pymupdf4llm | 1.27.2 | 0.83 | 0.89 | 0.54 | 0.77 |
-| opendataloader | 2.3.0 | 0.83 | 0.90 | 0.48 | 0.74 |
-| markitdown | 0.1.5 | 0.59 | 0.84 | 0.27 | 0.00 |
-| pypdf | 6.10.2 | 0.58 | 0.87 | 0.00 | 0.00 |
-| liteparse | 1.2.1 | 0.57 | 0.86 | 0.00 | 0.00 |
+| **Nutrient `--vision`** † | 1.3.0 | **0.93** | **0.96** | **0.94** | **0.87** |
+| **Nutrient** | 1.3.0 | 0.89 | 0.93 | 0.74 | 0.82 |
+| docling | 2.110.0 | 0.89 | 0.91 | 0.93 | 0.83 |
+| pymupdf4llm | 1.28.0 | 0.86 | 0.90 | 0.73 | 0.78 |
+| opendataloader | 2.4.7 | 0.83 | 0.90 | 0.48 | 0.74 |
+| markitdown | 0.1.6 | 0.59 | 0.84 | 0.27 | 0.00 |
+| pypdf | 6.14.2 | 0.58 | 0.87 | 0.00 | 0.00 |
+| liteparse | 2.4.1 | 0.57 | 0.86 | 0.00 | 0.00 |
+
+Among the default (non-vision) engines: Nutrient has the best reading order; docling 2.110 has the best table structure and a hair's-width overall edge at the third decimal (0.892 vs 0.889) — at 134× the runtime. The `--vision` tier tops every metric outright, including tables. The `opendataloader-hybrid` variant was not re-run (it requires a separate docling backend service); its last published numbers were 0.87 overall.
 
 ### Speed
 
 | Solution | Seconds per page |
 | --- | ---: |
-| **Nutrient** | **0.011** |
-| pypdf | 0.019 |
-| opendataloader | 0.023 |
-| markitdown | 0.097 |
-| pymupdf4llm | 0.319 |
-| opendataloader-hybrid | 0.444 |
-| docling | 0.527 |
-| liteparse | 1.081 |
+| **Nutrient** | **0.004** |
+| liteparse | 0.004 |
+| opendataloader | 0.015 |
+| pypdf | 0.015 |
+| markitdown | 0.069 |
+| pymupdf4llm | 0.218 |
+| docling | 0.549 |
+| Nutrient `--vision` † | 1.045 |
+
+Nutrient and liteparse run batch-parallel; the other engines process sequentially in-process. Nutrient is the fastest structure-preserving parser by a wide margin — only liteparse (which preserves no table/heading structure) matches its throughput.
 
 ### Faster with Nutrient
 
-- `98x` faster than `liteparse`
-- `48x` faster than `docling`
-- `40x` faster than `opendataloader-hybrid`
-- `29x` faster than `pymupdf4llm`
-- `9x` faster than `markitdown`
-- `2x` faster than `opendataloader`
+- `134x` faster than `docling`
+- `53x` faster than `pymupdf4llm`
+- `17x` faster than `markitdown`
+- `4x` faster than `pypdf`
+- `4x` faster than `opendataloader`
+
+### † The `--vision` tier
+
+Nutrient 1.3.0 adds a machine-vision ICR pipeline behind the `--vision` flag: layout analysis, table reconstruction, formulas, and handwriting, running locally with GPU-hybrid inference (`--provider auto`; falls back to CPU). In this benchmark it tops **every** accuracy metric — including table structure, where it beats docling outright — at 1.05 s/page on CPU-class hardware.
+
+Vision is a **licensed** capability: it requires a license key (`--license-key`) and is not part of the free tier. The default engine above remains free for up to 1,000 documents per calendar month. Contact `sales@nutrient.io` for a vision license.
 
 For the full comparison table, see [docs/benchmarks.md](docs/benchmarks.md).
 
