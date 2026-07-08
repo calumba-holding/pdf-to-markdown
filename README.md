@@ -16,7 +16,7 @@ Fast, accurate Markdown from PDFs — locally, with no cleanup required. Built f
 
 - **How fast is it?** — 0.004s per page. 134x faster than docling, 53x faster than pymupdf4llm. ([benchmarks](#benchmarks))
 - **How accurate is it?** — 0.93 reading order (best in class), 0.89 overall extraction accuracy, 0.82 heading detection. ([benchmarks](#benchmarks))
-- **NEW: `--vision` tier** — a licensed machine-vision ICR pipeline that tops every accuracy metric, including tables (0.94 TEDS), and handles scanned and handwritten documents. ([benchmarks](#benchmarks))
+- **NEW: `--vision` tier** — a licensed machine-vision ICR pipeline that tops every accuracy metric, including tables (0.94 TEDS), handles scanned and handwritten documents — and still runs faster than docling (0.35s per page). ([benchmarks](#benchmarks))
 - **Three tools, one binary** — `pdf-to-markdown` for structured Markdown, `pdf-to-text` for layout-preserving plain text, and `query` for ranked search over an extracted file. Pick by what the downstream consumer needs. ([the Nutrient document CLI](#the-nutrient-document-cli))
 - **NEW: Image export** — `--enable-image-export` extracts images alongside Markdown for vision-capable LLMs. ([usage](#image-export))
 - **Where do my PDFs go?** — Nowhere. The CLI runs locally. Your documents are not uploaded to Nutrient. ([trust & licensing](#trust-and-licensing))
@@ -194,7 +194,7 @@ Benchmark results from 200 PDF documents with hand-annotated Markdown ground tru
 
 ![Heading level](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/heading-level.png?v=20260706)
 
-![Extraction speed](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/extraction-speed.png?v=20260706)
+![Extraction speed](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/extraction-speed.png?v=20260707)
 
 ![Faster with Nutrient](https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/faster-with-nutrient.png?v=20260706)
 
@@ -202,7 +202,7 @@ Benchmark results from 200 PDF documents with hand-annotated Markdown ground tru
 
 | Solution | Version | Overall | Reading Order (NID) | Table Structure (TEDS) | Heading Level (MHS) |
 | --- | --- | ---: | ---: | ---: | ---: |
-| **Nutrient `--vision`** † | 1.3.0 | **0.93** | **0.96** | **0.94** | **0.87** |
+| **Nutrient `--vision`** † | 1.3.1 | **0.93** | **0.96** | **0.94** | **0.87** |
 | **Nutrient** | 1.3.0 | 0.89 | 0.93 | 0.74 | 0.82 |
 | docling | 2.110.0 | 0.89 | 0.91 | 0.93 | 0.83 |
 | pymupdf4llm | 1.28.0 | 0.86 | 0.90 | 0.73 | 0.78 |
@@ -211,7 +211,7 @@ Benchmark results from 200 PDF documents with hand-annotated Markdown ground tru
 | pypdf | 6.14.2 | 0.58 | 0.87 | 0.00 | 0.00 |
 | liteparse | 2.4.1 | 0.57 | 0.86 | 0.00 | 0.00 |
 
-Among the default (non-vision) engines: Nutrient has the best reading order; docling 2.110 has the best table structure and a hair's-width overall edge at the third decimal (0.892 vs 0.889) — at 134× the runtime. The `--vision` tier tops every metric outright, including tables. The `opendataloader-hybrid` variant was not re-run (it requires a separate docling backend service); its last published numbers were 0.87 overall.
+Among the default (non-vision) engines: Nutrient has the best reading order; docling 2.110 has the best table structure and a hair's-width overall edge at the third decimal (0.892 vs 0.889) — at 134× the runtime. The `--vision` tier tops every metric outright, including tables — while running faster than docling. The `opendataloader-hybrid` variant was not re-run (it requires a separate docling backend service); its last published numbers were 0.87 overall.
 
 ### Speed
 
@@ -223,8 +223,8 @@ Among the default (non-vision) engines: Nutrient has the best reading order; doc
 | pypdf | 0.015 |
 | markitdown | 0.069 |
 | pymupdf4llm | 0.218 |
+| Nutrient `--vision` † | 0.354 |
 | docling | 0.549 |
-| Nutrient `--vision` † | 1.045 |
 
 Nutrient and liteparse run batch-parallel; the other engines process sequentially in-process. Nutrient is the fastest structure-preserving parser by a wide margin — only liteparse (which preserves no table/heading structure) matches its throughput.
 
@@ -238,7 +238,7 @@ Nutrient and liteparse run batch-parallel; the other engines process sequentiall
 
 ### The `--vision` tier
 
-† Nutrient 1.3.0 adds a machine-vision ICR pipeline behind the `--vision` flag: layout analysis, table reconstruction, formulas, and handwriting, running locally with GPU-hybrid inference (`--provider auto`; falls back to CPU). In this benchmark it tops **every** accuracy metric — including table structure, where it beats docling outright — at 1.05 s/page on CPU-class hardware.
+† Nutrient 1.3.0 added a machine-vision ICR pipeline behind the `--vision` flag: layout analysis, table reconstruction, formulas, and handwriting, running locally with GPU-hybrid inference (`--provider auto`; falls back to CPU). In this benchmark (1.3.1) it tops **every** accuracy metric — including table structure, where it beats docling outright — and at 0.35 s/page it is also faster than docling. There is no speed-for-accuracy trade against the open-source field.
 
 The first `--vision` run downloads the vision models (several hundred MB, cached locally afterward). Vision is a **licensed** capability: it requires a license key (`--license-key`) and is not part of the free tier. The default engine above remains free for up to 1,000 documents per calendar month. Contact `sales@nutrient.io` for a vision license.
 
