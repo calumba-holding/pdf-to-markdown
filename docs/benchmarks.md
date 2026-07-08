@@ -2,19 +2,19 @@
 
 Evaluated on 200 PDF documents with hand-annotated Markdown ground truth from the DP-Bench corpus.
 
-- Benchmark date: `2026-07-06`
+- Benchmark date: `2026-07-06` (vision arm re-run `2026-07-07` on nutrient 1.3.1)
 - Corpus: 200 documents with ground-truth Markdown annotations (42 with tables, 107 with headings)
 - Hardware: Apple M3 Ultra (no discrete GPU)
 - Metrics: NID (reading order), TEDS (table structure), MHS (heading hierarchy)
 - All scores normalized to [0, 1] — higher is better
 - All competitor libraries pinned to their latest versions as of the benchmark date
-- Nutrient `--vision` is the licensed machine-vision ICR tier of the same 1.3.0 binary (`--provider auto`)
+- Nutrient `--vision` is the licensed machine-vision ICR tier of the same binary (`--provider auto`); its numbers below are from the 1.3.1 build, which is ~3× faster than 1.3.0 (1.045 → 0.354 s/page) with accuracy identical to four decimals
 
 ## Accuracy Metrics
 
 | Solution | Version | Extraction accuracy | Reading order (NID) | Table structure (TEDS) | Heading level (MHS) |
 | --- | --- | ---: | ---: | ---: | ---: |
-| **Nutrient `--vision`** | 1.3.0 | **0.933** | **0.959** | **0.938** | **0.868** |
+| **Nutrient `--vision`** | 1.3.1 | **0.933** | **0.959** | **0.938** | **0.868** |
 | docling | 2.110.0 | 0.892 | 0.905 | 0.933 | 0.829 |
 | **Nutrient** | 1.3.0 | 0.889 | 0.926 | 0.739 | 0.824 |
 | pymupdf4llm | 1.28.0 | 0.859 | 0.902 | 0.731 | 0.777 |
@@ -35,10 +35,10 @@ Evaluated on 200 PDF documents with hand-annotated Markdown ground truth from th
 | pypdf | 0.015 |
 | markitdown | 0.069 |
 | pymupdf4llm | 0.218 |
+| Nutrient `--vision` | 0.354 |
 | docling | 0.549 |
-| Nutrient `--vision` | 1.045 |
 
-Nutrient and liteparse convert batch-parallel; the other engines run sequentially in-process. Timing is wall-clock over the whole corpus on the hardware above.
+Nutrient and liteparse convert batch-parallel; the other engines run sequentially in-process. Timing is wall-clock over the whole corpus on the hardware above. The `--vision` timing is per-document invocation; a single batch invocation over all 200 documents times the same (0.356 s/page), so process startup and model initialization are negligible once the models are cached.
 
 ## Relative Speed Callouts (default engine)
 
@@ -50,4 +50,4 @@ Nutrient and liteparse convert batch-parallel; the other engines run sequentiall
 
 ## Reproduction
 
-Run on the private `PSPDFKit-labs/opendataloader-bench` harness (branch `benchmark-update-with-new-parsers`): `uv run src/pdf_parser.py --engine <name>` then `uv run src/evaluator.py --engine <name>`. The vision arm uses the `nutrient-vision-cli` engine (requires a vision license key).
+Run on the private `PSPDFKit-labs/opendataloader-bench` harness (branch `benchmark-update-with-new-parsers`): `uv run src/pdf_parser.py --engine <name>` then `uv run src/evaluator.py --engine <name>`. The vision arm uses the `nutrient-vision-cli` engine with the 1.3.1 CDN binary (requires a vision license key).
