@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 — 2026-07-19
+
+- Windows support: the Nutrient CDN now ships Authenticode-signed `windows-amd64` and `windows-arm64` binaries (nutrient 1.4.0+), and the bootstrap wrappers detect Git Bash environments (`MINGW`/`MSYS`/`CYGWIN`) and download the matching `.exe`
+- No PowerShell twin: on native Windows the POSIX wrappers run under Git Bash, which is bundled with Git for Windows and is what Claude Code's Bash tool uses; an x64 Git Bash on Windows-on-ARM fetches the amd64 binary and runs under Windows emulation
+- No changes to the extraction engine or benchmarks in this release
+
 ## 0.4.0 — 2026-06-30
 
 - Add `query` command: ranked BM-25 search over an already-extracted file, returning only the top line windows with global line numbers ("parse once, query many") — backed by the same local binary via an `argv[0]` symlink (`query` is a two-level command, `query text INPUT "QUERY"`)
