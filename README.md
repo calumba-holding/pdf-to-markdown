@@ -4,7 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/%40pspdfkit%2Fpdf-to-markdown)](https://www.npmjs.com/package/@pspdfkit/pdf-to-markdown)
 [![macOS](https://img.shields.io/badge/macOS-arm64-brightgreen)](https://github.com/PSPDFKit/pdf-to-markdown)
 [![Linux](https://img.shields.io/badge/Linux-x64_|_arm64-brightgreen)](https://github.com/PSPDFKit/pdf-to-markdown)
-[![Windows](https://img.shields.io/badge/Windows-x64_(coming_soon)-yellow)](https://github.com/PSPDFKit/pdf-to-markdown)
+[![Windows](https://img.shields.io/badge/Windows-x64_|_arm64-brightgreen)](https://github.com/PSPDFKit/pdf-to-markdown)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/PSPDFKit/pdf-to-markdown/main/docs/assets/demo.gif" alt="pdf-to-markdown demo" width="720">
@@ -83,7 +83,7 @@ Or run it without a global install:
 npx @pspdfkit/pdf-to-markdown --help
 ```
 
-The package supports Node `18+` on macOS Apple Silicon, Linux x86_64, and Linux arm64.
+The package supports Node `18+` on macOS Apple Silicon, Linux x86_64, Linux arm64, and Windows (x64 and arm64). On Windows the commands run under Git Bash, which ships with [Git for Windows](https://git-scm.com/download/win) and is what agent tools like Claude Code already use for their shell.
 
 If you prefer a shell installer, keep the curl fallback:
 
@@ -176,7 +176,10 @@ The wrapper keeps the bundled binary current on its own: it checks the Nutrient 
 - macOS Apple Silicon (`Darwin/arm64`)
 - Linux x86_64
 - Linux arm64
-- Windows x64 (coming soon)
+- Windows x64
+- Windows arm64
+
+Windows binaries are Authenticode-signed and run under Git Bash (`MINGW`/`MSYS`/`Cygwin` environments), bundled with Git for Windows. An x64 Git Bash on Windows-on-ARM detects as x86_64 and fetches the x64 binary, which runs fine under Windows emulation.
 
 ## Benchmarks
 
