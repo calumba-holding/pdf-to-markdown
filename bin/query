@@ -573,6 +573,7 @@ verb_link_is_valid() {
 
   case "$(uname -s)" in
     MINGW*|MSYS*|CYGWIN*)
+      # shellcheck disable=SC3013 # this branch only runs under Git Bash/Cygwin, where sh is bash and supports -nt
       [ -z "$verb_link_target" ] &&
         [ ! "$NUTRIENT_CLI" -nt "$VERB_LINK" ]
       ;;
