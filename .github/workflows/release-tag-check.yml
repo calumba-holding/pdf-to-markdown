@@ -1,0 +1,43 @@
+name: Release tag check
+
+# npm publish and GitHub tagging are both manual on this repo. This check
+# fails when the version in package.json is live on npm but has no matching
+# v<version> git tag, so a published release can't silently go untagged.
+# The daily schedule catches publishes that happen without a push to main.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  release-tag-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Check npm version has a matching git tag
+        run: |
+          set -eu
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          echo "package.json: $name@$version"
+
+          if ! npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "PASS: $version is not on npm yet — nothing to tag."
+            exit 0
+          fi
+
+          if git ls-remote --tags origin "refs/tags/v$version" | grep -q .; then
+            echo "PASS: $name@$version is on npm and tag v$version exists."
+            exit 0
+          fi
+
+          echo "FAIL: $name@$version is published on npm but tag v$version does not exist."
+          echo
+          echo "Tag the merge commit that shipped $version and cut a release:"
+          echo "  git tag v$version <sha> && git push origin v$version"
+          echo "  gh release create v$version --title 'v$version — ...' --notes '...'"
+          exit 1
