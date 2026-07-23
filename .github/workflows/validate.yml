@@ -2,20 +2,32 @@ name: Validate
 
 on:
   push:
+    branches: [main]
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
+
+      - name: Install ShellCheck
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y shellcheck
+
+      - name: Run ShellCheck
+        if: runner.os == 'Linux'
+        run: shellcheck -s sh install.sh bin/pdf-to-markdown bin/pdf-to-text bin/query
 
       - name: Check shell syntax
         run: npm run check
@@ -25,6 +37,8 @@ jobs:
           tmpdir="$(mktemp -d)"
           INSTALL_DIR="$tmpdir/bin" ./install.sh
           test -x "$tmpdir/bin/pdf-to-markdown"
+          test -x "$tmpdir/bin/pdf-to-text"
+          test -x "$tmpdir/bin/query"
 
       - name: Verify npm pack surface
         run: npm pack --dry-run

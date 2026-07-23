@@ -25,12 +25,31 @@ jobs:
           version="$(node -p "require('./package.json').version")"
           echo "package.json: $name@$version"
 
-          if ! npm view "$name@$version" version >/dev/null 2>&1; then
-            echo "PASS: $version is not on npm yet — nothing to tag."
-            exit 0
+          npm_stderr="$(mktemp)"
+          trap 'rm -f "$npm_stderr"' EXIT
+          if ! npm view "$name@$version" version >/dev/null 2>"$npm_stderr"; then
+            if grep -q 'E404' "$npm_stderr"; then
+              echo "PASS: $version is not on npm yet — nothing to tag."
+              exit 0
+            fi
+
+            cat "$npm_stderr" >&2
+            echo "FAIL: npm view failed for $name@$version." >&2
+            exit 1
           fi
 
-          if git ls-remote --tags origin "refs/tags/v$version" | grep -q .; then
+          tag_ref="$(git ls-remote --tags origin "refs/tags/v$version")"
+          if [ -n "$tag_ref" ]; then
+            git fetch origin tag "v$version" --no-tags
+            tag_version="$(
+              git show "v$version:package.json" |
+                node -e 'const fs = require("fs"); process.stdout.write(JSON.parse(fs.readFileSync(0, "utf8")).version)'
+            )"
+            if [ "$tag_version" != "$version" ]; then
+              echo "tag v$version does not contain package.json version $version" >&2
+              exit 1
+            fi
+
             echo "PASS: $name@$version is on npm and tag v$version exists."
             exit 0
           fi

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.1 — 2026-07-23
+
+- Allow npm installation on Windows by adding `win32` to the package OS list
+- Verify downloaded archives when an optional SHA-256 sidecar is present, with strict verification available through `NUTRIENT_REQUIRE_CHECKSUM=1`
+- Serialize binary updates with an install lock and replace installations with an atomic swap that preserves the live directory until the replacement is ready
+- Add connection, transfer, and retry limits to wrapper and installer downloads
+- Prevent piped-shell `$0` hijacking and stage all three installer commands before replacing existing files
+- Harden CI validation, release-tag checks, shell linting, and cross-platform installer coverage
+
 ## 0.5.0 — 2026-07-19
 
 - Windows support: the Nutrient CDN now ships Authenticode-signed `windows-amd64` and `windows-arm64` binaries (nutrient 1.4.0+), and the bootstrap wrappers detect Git Bash environments (`MINGW`/`MSYS`/`CYGWIN`) and download the matching `.exe`
@@ -37,6 +46,10 @@
 - Update benchmarks to 2026-04-22 run (nutrient now #1 overall at 0.89, 87x faster than docling)
 - Add opendataloader-hybrid, pypdf, and liteparse to benchmark tables
 - Refresh benchmark chart images
+
+## 0.2.0 — 2026-04-22
+
+- Published to npm and superseded by 0.2.1 the same day
 
 ## 0.1.0 — 2026-04-02
 

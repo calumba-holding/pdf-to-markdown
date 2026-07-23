@@ -179,6 +179,8 @@ The wrapper keeps the bundled binary current on its own: it checks the Nutrient 
 - Windows x64
 - Windows arm64
 
+macOS Intel and Rosetta shells are unsupported; npm may allow installation, but the commands refuse to run.
+
 Windows binaries are Authenticode-signed and run under Git Bash (`MINGW`/`MSYS`/`Cygwin` environments), bundled with Git for Windows. An x64 Git Bash on Windows-on-ARM detects as x86_64 and fetches the x64 binary, which runs fine under Windows emulation.
 
 ## Benchmarks
