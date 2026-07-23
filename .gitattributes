@@ -1,0 +1,4 @@
+* text=auto
+install.sh text eol=lf
+bin/* text eol=lf
+*.yml text eol=lf
